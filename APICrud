@@ -1,0 +1,141 @@
+1.
+Installing Django and DRF
+First, you’ll need to install Django and DRF. You can do this by running the following command:
+
+pip install django djangorestframework
+2.
+Making a new Django project
+Next, you’ll need to create a new Django project. You can do this by running the following command:
+
+django-admin startproject myproject
+3.
+Creating an App in Django
+Let’s create a new app within our project called “tasks.” You can do this by running the following command:
+
+python manage.py startapp myapp
+
+4.Add this into settings.py
+
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'rest_framework',
+    'api',
+]
+
+5.Create the model
+
+from django.db import models
+
+class Data(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.CharField(max_length=500)
+
+6.Create the seralizer for that model
+
+from rest_framework import serializers
+from .models import Data
+
+class DataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Data
+        fields=('name','description')
+
+7.Register the model in admin;
+
+
+from django.contrib import admin
+from .models import Data
+
+
+
+# Register your models here.
+admin.site.register(Data)    
+
+
+8.Perfoprm the migration command
+
+
+9.Create the viewset
+
+from django.shortcuts import render
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from .models import Data
+from rest_framework import status
+from .serializer import DataSerializer
+
+
+
+# Create your views here.
+@api_view(['GET'])
+def getData(request):
+    app = Data.objects.all()
+    serializer = DataSerializer(app, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def postData(request):
+    serializer = DataSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+
+
+@api_view(['PUT'])
+def putData(request, pk):
+    try:
+        data_instance = Data.objects.get(pk=pk)
+    except Data.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    serializer = DataSerializer(data_instance, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+def deleteData(request, pk):
+    try:
+        data_instance = Data.objects.get(pk=pk)
+    except Data.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    data_instance.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)  
+
+
+
+10.Urls.py
+
+from django.urls import path
+from . import views
+from django.conf import settings
+
+
+
+urlpatterns = [
+path('',views.getData),
+path('get/', views.getData),
+path('post/',views.postData),
+path('put/<int:pk>/',views.putData),
+path('delete/<int:pk>/', views.deleteData),
+]
+
+11.Mainproject/Urls
+"""
+from django.contrib import admin
+from django.urls import path,include
+from api import views
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('',include('api.urls')),
+] 
