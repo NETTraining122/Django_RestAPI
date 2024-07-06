@@ -1,0 +1,126 @@
+REST APIs in Django using Django-rest-framework?
+
+
+Building RESTful APIs in Django using Django Rest Framework
+
+Introduction
+Learn how to create a RESTful API for a to-do list application using Django and Django Rest Framework. This tutorial will walk you through setting up a new Django project,
+creating a model for tasks, creating a serializer for tasks, creating a view for tasks, and creating a URL router for tasks.
+
+You’ll also learn how to use Django Rest Framework to handle standard web development tasks such as handling HTTP requests and responses and working with databases.
+By the end of this tutorial, you’ll have a working RESTful API for a to-do list application that you can quickly expand and customize to fit your needs. Additionally,
+understand the final project directory, which is well organized and easy to understand for developers.
+
+Using Django and Django Rest Framework is an efficient way to build RESTful web services.
+
+
+REST APIs
+RESTful (Representational State Transfer) APIs are web architecture with constraints usually applied to web services. These APIs are built using the HTTP protocol and have rules
+defining how the API should be designed. The most common methods used in RESTful APIs are GET, POST, PUT, PATCH, and DELETE.
+
+These methods are used to retrieve, add, update and delete resources. RESTful APIs are designed to be lightweight, stateless, and easy to scale. 
+They can be accessed from various languages and devices, making them a popular choice for building web services and applications. RESTful APIs also typically return data in a standard format, such as JSON or XML, which allows for easy consumption by other systems and applications.
+
+
+Django-Rest-Framework (DRF)
+Django Rest Framework (DRF) is a powerful and flexible package that makes it easy to build RESTful web services using Django. DRF is built on top of the Django framework.
+
+It provides a lot of built-in functionality for handling everyday web development tasks, such as handling HTTP requests and responses, working with databases, and handling user authentication.
+
+It also allows for easy customization of the API through a variety of settings and options. Additionally, it supports many popular serialization formats such as JSON and XML and also 
+includes browsable API views for easy testing and development.
+
+DRF is widely used in the industry and has a large, active community of developers contributing to its development and maintenance. It is an excellent choice for building REST APIs in Django.
+
+Learn more about Django-Rest-Framework
+
+Installing Django and DRF
+First, you’ll need to install Django and DRF. You can do this by running the following command:
+
+pip install django djangorestframework
+Making a new Django project
+Next, you’ll need to create a new Django project. You can do this by running the following command:
+
+django-admin startproject myproject
+Creating an App in Django
+Let’s create a new app within our project called “tasks.” You can do this by running the following command:
+
+python manage.py startapp tasks
+Creating a Model in Django App
+Next, you’ll need to create a model for your tasks. In this example, we’ll create a simple model with a title and a completed field. You can create a new file called models.py in your tasks app and put the following code in it:
+
+from django.db import models
+
+class Task(models.Model):
+    title = models.CharField(max_length=255)
+    completed = models.BooleanField(default=False)
+Creating a serializer
+Now, you’ll need to create a serializer for your tasks. A serializer converts your model objects into a format easily serialized to JSON, XML, or other formats. You can create a new file called serializers.py in your tasks app and put the following code in it:
+
+from rest_framework import serializers
+from .models import Task
+
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ('id', 'title', 'completed')
+Creating ViewSet
+Now, you’ll need to create a view for your tasks. A view is used to handle HTTP requests and return HTTP responses. You can create a new file called. views.py in your tasks app and put the following code in it:
+
+from rest_framework import viewsets
+from .models import Task
+from .serializers import TaskSerializer
+
+class TaskViewSet(viewsets.ModelViewSet):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+Pointing the above ViewSet to a route
+Finally, you’ll need to create a URL router for your tasks. A URL router is used to map URLs to views. You can create a new file called urls.py in your tasks app and put the following code in it:
+
+from django.urls import path, include
+from rest_framework import routers
+from .views import TaskViewSet
+
+router = routers.DefaultRouter()
+router.register('tasks', TaskViewSet)
+
+urlpatterns = [
+    path('', include(router.urls)),
+]
+That’s it! You should now have a working REST API for your to-do list application.
+
+Project Directory
+myproject/
+    manage.py
+    myproject/
+        settings.py
+        urls.py
+        asgi.py
+        wsgi.py
+    tasks/
+        models.py
+        serializers.py
+        views.py
+        urls.py
+        migrations/
+Explanation
+myproject is the root directory of your Django project, which contains the manage.py file and the main settings and URLs for your project.
+
+myproject/myproject The project's inner directory contains settings, URLs, asgi, and wsgi files.
+
+tasks is the app directory that contains the model, serializer, views, and URLs for your tasks, as well as any migrations that have been created for the app.
+
+models.py The file will have the Task model definition.
+
+serializers.py The file will have the TaskSerializer class definition.
+
+views.py The file will have the TaskViewSet class definition.
+
+urls.py The file will have the URL routing configuration for the tasks app.
+
+migrations The directory will have the database migration files for the tasks app.
+
+
+The Django Rest Framework package provides a lot of built-in functionality for handling everyday web development tasks, such as handling HTTP requests and responses, working with databases, and handling user authentication. It also provides many options to customize your API as per the requirements. The final project directory is well-organized and easy to understand for developers. Using Django and Django Rest Framework can save time and effort when building RESTful web services.
+
+In the next post, I will share, “How to customize REST API responses as per the user role/type in Django?”
